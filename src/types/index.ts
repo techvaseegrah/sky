@@ -11,6 +11,7 @@ export interface Expense {
   date: Date;
   supplier?: string;
   receipt?: string;
+  tags?: string[]; 
   createdAt?: Date;
   updatedAt?: Date;
 }
