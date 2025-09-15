@@ -192,21 +192,6 @@ export default function Dashboard() {
                         <p className="text-xs text-gray-500">
                           {new Date(expense.date).toLocaleDateString()}
                         </p>
-                        {expense.tags && expense.tags.length > 0 && (
-                          <div className="flex gap-1 mt-1">
-                            {expense.tags.slice(0, 2).map((tag) => (
-                              <span
-                                key={tag}
-                                className="inline-block px-1 py-0.5 rounded text-xs bg-blue-100 text-blue-800"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                            {expense.tags.length > 2 && (
-                              <span className="text-xs text-gray-500">+{expense.tags.length - 2} more</span>
-                            )}
-                          </div>
-                        )}
                       </div>
                     </div>
                     <div className="text-right">
