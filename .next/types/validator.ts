@@ -65,6 +65,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
   type __Unused = __Check
 }
 
+// Validate ../../src/app/api/cron/daily-report/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/cron/daily-report">> = Specific
+  const handler = {} as typeof import("../../src/app/api/cron/daily-report/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
 // Validate ../../src/app/api/expenses/route.ts
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/expenses">> = Specific
@@ -78,6 +87,15 @@ type RouteHandlerConfig<Route extends AppRouteHandlerRoutes = AppRouteHandlerRou
 {
   type __IsExpected<Specific extends RouteHandlerConfig<"/api/transactions">> = Specific
   const handler = {} as typeof import("../../src/app/api/transactions/route.js")
+  type __Check = __IsExpected<typeof handler>
+  // @ts-ignore
+  type __Unused = __Check
+}
+
+// Validate ../../src/app/api/whatsapp/daily-report/route.ts
+{
+  type __IsExpected<Specific extends RouteHandlerConfig<"/api/whatsapp/daily-report">> = Specific
+  const handler = {} as typeof import("../../src/app/api/whatsapp/daily-report/route.js")
   type __Check = __IsExpected<typeof handler>
   // @ts-ignore
   type __Unused = __Check

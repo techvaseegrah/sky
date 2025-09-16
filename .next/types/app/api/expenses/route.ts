@@ -1,4 +1,4 @@
-// File: D:\fresh face all files\Wineshop-software\src\app\api\expenses\route.ts
+// File: C:\Users\USER\Documents\Bar Shop\bar-project-\src\app\api\expenses\route.ts
 import * as entry from '../../../../../src/app/api/expenses/route.js'
 import type { NextRequest } from 'next/server.js'
 
