@@ -10,7 +10,7 @@ export function initializeCronJobs() {
     return;
   }
 
-  // Only run cron jobs in production or when explicitly enabled
+  // Only run cron jobs in production or when explicitly enable
   const enableCron = process.env.NODE_ENV === 'production' || process.env.ENABLE_CRON === 'true';
   
   if (!enableCron) {
