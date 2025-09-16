@@ -42,7 +42,7 @@ export async function POST(request: NextRequest) {
     const netProfit = totalSales - totalExpenses - totalPurchases;
 
     // Send WhatsApp message using template
-    const phoneNumber = '6381541229';
+    const phoneNumber = '9514562222';
     const whatsappResponse = await sendWhatsAppTemplate(phoneNumber, {
       date: yesterday.toDateString(),
       sales: totalSales.toFixed(2),
