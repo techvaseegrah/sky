@@ -18,8 +18,8 @@ export function initializeCronJobs() {
   }
 
   try {
-    // Schedule daily report at 10:31 AM IST
-    cron.schedule('35 10 * * *', async () => { // <-- THIS LINE IS CHANGED
+    // Schedule daily report at 12:01 AM IST
+    cron.schedule('1 0 * * *', async () => { // <-- THIS LINE IS CHANGED
       console.log('🕛 Running daily WhatsApp report at:', new Date().toLocaleString('en-IN'));
       
       try {
@@ -54,7 +54,7 @@ export function initializeCronJobs() {
 
     cronJobStarted = true;
     // Update the confirmation message
-    console.log('⏰ Cron jobs initialized successfully! Daily reports scheduled for 10:32 AM IST');
+    console.log('⏰ Cron jobs initialized successfully! Daily reports scheduled for 12:01 AM IST');
     
   } catch (error) {
     console.error('❌ Failed to initialize cron jobs:', error);

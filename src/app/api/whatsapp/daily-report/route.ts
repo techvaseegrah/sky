@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     const tamilDate = getTamilFormattedDate(yesterday);
 
-    const phoneNumber = '6381541229';
+    const phoneNumber = '9514562222';
     const whatsappResponse = await sendWhatsAppTemplate(phoneNumber, {
       date: tamilDate,
       sales: `₹${totalSales.toFixed(2)}`,
