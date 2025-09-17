@@ -1,4 +1,3 @@
-// src/lib/cronScheduler.ts
 import cron from 'node-cron';
 
 let cronJobStarted = false;
@@ -10,7 +9,7 @@ export function initializeCronJobs() {
     return;
   }
 
-  // Only run cron jobs in production or when explicitly enable
+  // Only run cron jobs in production or when explicitly enabled
   const enableCron = process.env.NODE_ENV === 'production' || process.env.ENABLE_CRON === 'true';
   
   if (!enableCron) {
@@ -20,7 +19,7 @@ export function initializeCronJobs() {
 
   try {
     // Schedule daily report at 12:01 AM IST
-    cron.schedule('1 0 * * *', async () => { // 12:01 AM IST
+    cron.schedule('1 0 * * *', async () => { // <-- THIS LINE IS CHANGED
       console.log('🕛 Running daily WhatsApp report at:', new Date().toLocaleString('en-IN'));
       
       try {
@@ -41,7 +40,7 @@ export function initializeCronJobs() {
         const result = await response.json();
         
         if (response.ok) {
-          console.log('✅ Daily report sent successfully:', result.data);
+          console.log('✅ Daily report sent successfully:', result);
         } else {
           console.error('❌ Failed to send daily report:', result.error);
         }
@@ -54,32 +53,10 @@ export function initializeCronJobs() {
     });
 
     cronJobStarted = true;
-    // Update the confirmation message to reflect the new time
+    // Update the confirmation message
     console.log('⏰ Cron jobs initialized successfully! Daily reports scheduled for 12:01 AM IST');
     
   } catch (error) {
     console.error('❌ Failed to initialize cron jobs:', error);
-  }
-}
-
-// Manual trigger function for testing
-export async function triggerDailyReportManually() {
-  try {
-    const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.NEXTJS_URL 
-      : 'http://localhost:3000';
-      
-    const response = await fetch(`${baseUrl}/api/whatsapp/daily-report`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    });
-    
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error('Manual report trigger error:', error);
-    throw error;
   }
 }

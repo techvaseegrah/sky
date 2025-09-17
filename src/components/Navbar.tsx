@@ -1,3 +1,6 @@
+'use client';
+
+import { useState, useEffect } from 'react';
 import { TabType } from '@/types';
 
 interface NavbarProps {
@@ -5,7 +8,25 @@ interface NavbarProps {
   setActiveTab: (tab: TabType) => void;
 }
 
+interface IReportLog {
+  status: 'Success' | 'Failure';
+  sentAt: string;
+}
+
 export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
+  const [lastStatus, setLastStatus] = useState<IReportLog | null>(null);
+
+  useEffect(() => {
+    fetch('/api/last-report-status')
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.status) {
+          setLastStatus(data);
+        }
+      })
+      .catch(err => console.error("Failed to fetch status", err));
+  }, []);
+
   const navItems: Array<{ id: TabType; label: string; icon: string }> = [
     { id: 'dashboard', label: 'Dashboard', icon: '📈' },
     { id: 'expenses', label: 'Expense Management', icon: '💰' },
@@ -20,6 +41,16 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <h1 className="text-xl font-bold text-blue-800">Expense Manager</h1>
           </div>
           
+          <div className="text-sm">
+            {lastStatus ? (
+              <span style={{ color: lastStatus.status === 'Success' ? 'green' : 'red', fontWeight: 'bold' }}>
+                Last Report ({new Date(lastStatus.sentAt).toLocaleTimeString()}): {lastStatus.status}
+              </span>
+            ) : (
+              <span className="text-gray-500">Checking report status...</span>
+            )}
+          </div>
+
           <div className="flex space-x-1">
             {navItems.map((item) => (
               <button

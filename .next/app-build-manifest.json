@@ -11,6 +11,11 @@
       "static/chunks/main-app.js",
       "static/chunks/app/page.js"
     ],
+    "/api/last-report-status/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/last-report-status/route.js"
+    ],
     "/api/expenses/route": [
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",

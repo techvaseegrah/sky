@@ -1,4 +1,4 @@
-// File: C:\Users\USER\Documents\Bar Shop\bar-project-\src\app\api\whatsapp\daily-report\route.ts
+// File: C:\Users\USER\Documents\bar-project-\src\app\api\whatsapp\daily-report\route.ts
 import * as entry from '../../../../../../src/app/api/whatsapp/daily-report/route.js'
 import type { NextRequest } from 'next/server.js'
 
