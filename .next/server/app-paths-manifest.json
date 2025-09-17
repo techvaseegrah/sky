@@ -1,3 +1,6 @@
 {
+  "/api/last-report-status/route": "app/api/last-report-status/route.js",
+  "/api/expenses/route": "app/api/expenses/route.js",
+  "/api/whatsapp/daily-report/route": "app/api/whatsapp/daily-report/route.js",
   "/page": "app/page.js"
 }

@@ -32,7 +32,6 @@ export default function RootLayout({
                 <h1 className="text-2xl font-bold text-gray-900">🍷 Wine Shop Manager</h1>
                 <div className="flex items-center space-x-4">
                   <div className="text-sm text-gray-500">
-                    📊 Daily Reports: 12:00 AM
                   </div>
                   {process.env.NODE_ENV === 'development' && (
                     <div className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded">

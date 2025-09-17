@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Expense from '@/models/Expense';
 import Transaction from '@/models/Transaction';
+import ReportLog from '@/models/ReportLog'; // Import the new model
 
 // Helper function to format the date into Tamil
 function getTamilFormattedDate(date: Date): string {
@@ -17,6 +18,10 @@ function getTamilFormattedDate(date: Date): string {
 }
 
 export async function POST(request: NextRequest) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
   try {
     const authHeader = request.headers.get('authorization');
     if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -24,10 +29,6 @@ export async function POST(request: NextRequest) {
     }
 
     await connectDB();
-    
-    const today = new Date();
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
     
     const startOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate());
     const endOfYesterday = new Date(yesterday.getFullYear(), yesterday.getMonth(), yesterday.getDate() + 1);
@@ -48,21 +49,37 @@ export async function POST(request: NextRequest) {
     const phoneNumber = '6381541229';
     const whatsappResponse = await sendWhatsAppTemplate(phoneNumber, {
       date: tamilDate,
-      // Add the ₹ symbol here in the code
       sales: `₹${totalSales.toFixed(2)}`,
       expenses: `₹${totalExpenses.toFixed(2)}`,
       netProfit: `₹${netProfit.toFixed(2)}`,
     });
     
     if (whatsappResponse.success) {
+      // Save SUCCESS log to the database
+      await new ReportLog({
+        status: 'Success',
+        message: `Report for ${yesterday.toDateString()} sent.`,
+      }).save();
+
       return NextResponse.json({ success: true, message: 'Daily report sent successfully' });
     } else {
-      throw new Error(`WhatsApp template sending failed: ${whatsappResponse.error}`);
+      // Save FAILURE log to the database
+      const errorMessage = `WhatsApp API failed: ${whatsappResponse.error}`;
+      await new ReportLog({ status: 'Failure', message: errorMessage }).save();
+      throw new Error(errorMessage);
     }
     
   } catch (error) {
-    console.error('❌ Error sending daily report:', error);
-    return NextResponse.json({ error: 'Failed to send daily report' }, { status: 500 });
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    console.error('❌ Error sending daily report:', errorMessage);
+    
+    // Save FAILURE log if any other error happens
+    await new ReportLog({
+      status: 'Failure',
+      message: `Cron job failed: ${errorMessage}`,
+    }).save();
+
+    return NextResponse.json({ error: 'Failed to send daily report', details: errorMessage }, { status: 500 });
   }
 }
 
@@ -85,7 +102,6 @@ async function sendWhatsAppTemplate(phoneNumber: string, templateData: {
       to: phoneNumber,
       type: 'template',
       template: {
-        // Use the new, longer template name that will be approved
         name: 'daily_tamil_summary',
         language: { code: 'ta' },
         components: [{

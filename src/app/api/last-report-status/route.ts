@@ -1,4 +1,3 @@
-// src/app/api/last-report-status/route.ts
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import ReportLog from '@/models/ReportLog';

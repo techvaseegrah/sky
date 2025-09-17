@@ -1,4 +1,3 @@
-// src/models/ReportLog.ts
 import mongoose, { Schema, Document, model, models } from 'mongoose';
 
 export interface IReportLog extends Document {

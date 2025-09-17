@@ -15,22 +15,61 @@ interface IReportLog {
 
 export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
   const [lastStatus, setLastStatus] = useState<IReportLog | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch('/api/last-report-status')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return res.json();
+      })
       .then(data => {
         if (data && data.status) {
           setLastStatus(data);
         }
       })
-      .catch(err => console.error("Failed to fetch status", err));
+      .catch(err => {
+        console.error("Failed to fetch status:", err);
+        // Set a failure status to show in the UI if the API fails
+        setLastStatus({ status: 'Failure', sentAt: new Date().toISOString() });
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   const navItems: Array<{ id: TabType; label: string; icon: string }> = [
     { id: 'dashboard', label: 'Dashboard', icon: '📈' },
     { id: 'expenses', label: 'Expense Management', icon: '💰' },
   ];
+
+  const renderStatus = () => {
+    if (isLoading) {
+      return (
+        <span className="text-gray-500 text-sm animate-pulse">
+          Checking status...
+        </span>
+      );
+    }
+    if (lastStatus) {
+      const isSuccess = lastStatus.status === 'Success';
+      return (
+        <div
+          className={`px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-2 ${
+            isSuccess ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}
+        >
+          <span>Last Report:</span>
+          <span>{isSuccess ? '✅' : '❌'}</span>
+          <span>{lastStatus.status}</span>
+          <span className="text-gray-500">({new Date(lastStatus.sentAt).toLocaleTimeString()})</span>
+        </div>
+      );
+    }
+    return <span className="text-sm text-yellow-600">No report data found.</span>;
+  };
 
   return (
     <nav className="bg-white shadow-lg border-b-2 border-blue-200">
@@ -41,15 +80,8 @@ export default function Navbar({ activeTab, setActiveTab }: NavbarProps) {
             <h1 className="text-xl font-bold text-blue-800">Expense Manager</h1>
           </div>
           
-          <div className="text-sm">
-            {lastStatus ? (
-              <span style={{ color: lastStatus.status === 'Success' ? 'green' : 'red', fontWeight: 'bold' }}>
-                Last Report ({new Date(lastStatus.sentAt).toLocaleTimeString()}): {lastStatus.status}
-              </span>
-            ) : (
-              <span className="text-gray-500">Checking report status...</span>
-            )}
-          </div>
+          {/* --- The Professional Status Display --- */}
+          {renderStatus()}
 
           <div className="flex space-x-1">
             {navItems.map((item) => (
