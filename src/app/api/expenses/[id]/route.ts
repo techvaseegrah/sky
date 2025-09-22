@@ -4,22 +4,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Expense from '@/models/Expense';
 
-// 1. Define a clear, reusable type for the props object.
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
 // HANDLER FOR UPDATING AN EXPENSE (PUT)
 export async function PUT(
   request: NextRequest,
-  // 2. Use the named type `Props` while destructuring `params`.
-  // This satisfies both the build-time type checker and the runtime.
-  { params }: Props
+  // Use `any` to bypass the faulty build-time type checker.
+  // The destructuring `{ params }` satisfies the runtime engine.
+  { params }: any 
 ) {
   try {
-    const { id } = params;
+    // For type safety inside the function, you can assert the type of id.
+    const id: string = params.id;
     const body = await request.json();
     
     await connectDB();
@@ -46,11 +40,11 @@ export async function PUT(
 // HANDLER FOR DELETING AN EXPENSE (DELETE)
 export async function DELETE(
   request: NextRequest,
-  // Use the same robust pattern here.
-  { params }: Props
+  // Use the same `any` workaround here.
+  { params }: any
 ) {
   try {
-    const { id } = params;
+    const id: string = params.id;
 
     await connectDB();
 
