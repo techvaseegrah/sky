@@ -4,14 +4,21 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Expense from '@/models/Expense';
 
+// 1. Define a clear, reusable type for the props object.
+type Props = {
+  params: {
+    id: string;
+  };
+};
+
 // HANDLER FOR UPDATING AN EXPENSE (PUT)
 export async function PUT(
   request: NextRequest,
-  // This is the canonical and correct signature that Next.js expects.
-  { params }: { params: { id: string } }
+  // 2. Use the named type `Props` while destructuring `params`.
+  // This satisfies both the build-time type checker and the runtime.
+  { params }: Props
 ) {
   try {
-    // 'id' is now directly available from the destructured 'params'.
     const { id } = params;
     const body = await request.json();
     
@@ -39,8 +46,8 @@ export async function PUT(
 // HANDLER FOR DELETING AN EXPENSE (DELETE)
 export async function DELETE(
   request: NextRequest,
-  // Use the same correct signature here.
-  { params }: { params: { id: string } }
+  // Use the same robust pattern here.
+  { params }: Props
 ) {
   try {
     const { id } = params;
