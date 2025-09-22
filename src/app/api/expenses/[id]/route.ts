@@ -4,15 +4,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Expense from '@/models/Expense';
 
-
+type RouteContext = {
+  params: {
+    id: string;
+  };
+};
 
 // HANDLER FOR UPDATING AN EXPENSE (PUT)
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function PUT(request: NextRequest, context: RouteContext) {
   try {
-    const { id } = params;
+    const { id } = context.params;
     const body = await request.json();
     
     await connectDB();
@@ -38,12 +39,9 @@ export async function PUT(
 }
 
 // HANDLER FOR DELETING AN EXPENSE (DELETE)
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function DELETE(request: NextRequest, context: RouteContext) {
   try {
-    const { id } = params;
+    const { id } = context.params;
 
     await connectDB();
 
