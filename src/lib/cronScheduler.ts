@@ -48,6 +48,7 @@ export function initializeCronJobs() {
         console.error('❌ Error in cron job:', error);
       }
     }, {
+      //@ts-ignore 
       scheduled: true,
       timezone: "Asia/Kolkata"
     });
