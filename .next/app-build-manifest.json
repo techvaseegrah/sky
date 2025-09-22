@@ -20,6 +20,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main-app.js",
       "static/chunks/app/api/expenses/[id]/route.js"
+    ],
+    "/api/whatsapp/daily-report/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/whatsapp/daily-report/route.js"
     ]
   }
 }
