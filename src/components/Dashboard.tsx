@@ -24,34 +24,49 @@ export default function Dashboard() {
     try {
       setLoading(true);
       
-      const expensesResponse = await fetch('/api/expenses');
-      const expensesData: Expense[] = await expensesResponse.json();
-      const expenses = Array.isArray(expensesData) ? expensesData : [];
-
-      if (!Array.isArray(expensesData)) {
-          console.warn("API for expenses did not return an array. Response:", expensesData);
-      }
+      // --- THE BIG CHANGE IS HERE ---
+      // We will make two API calls in parallel to the same endpoint but with different parameters.
+      const [allExpensesResponse, recentExpensesResponse] = await Promise.all([
+        // 1. Fetch ALL expenses for statistical calculations by using a very high limit.
+        fetch('/api/expenses?limit=100000'), 
+        // 2. Fetch just the 5 most recent expenses for the list display.
+        fetch('/api/expenses?page=1&limit=5')
+      ]);
       
-      const totalExpenses = expenses.reduce((sum, expense) => sum + expense.amount, 0);
+      if (!allExpensesResponse.ok || !recentExpensesResponse.ok) {
+        throw new Error("Failed to fetch dashboard data");
+      }
+
+      const allExpensesResult = await allExpensesResponse.json();
+      const recentExpensesResult = await recentExpensesResponse.json();
+      
+      // IMPORTANT: The paginated API returns an object { data: [...] }. We need to use the `data` property.
+      const allExpenses: Expense[] = allExpensesResult.data || [];
+      const recent: Expense[] = recentExpensesResult.data || [];
+
+      // --- All calculations are now done on the client-side again, using the `allExpenses` array ---
+      const totalExpenses = allExpenses.reduce((sum, expense) => sum + expense.amount, 0);
       
       const thirtyDaysAgo = new Date();
       thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-      const monthlyExpenses = expenses.filter(expense => new Date(expense.date) >= thirtyDaysAgo);
-      const monthlyTotal = monthlyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+      const monthlyTotal = allExpenses
+        .filter(expense => new Date(expense.date) >= thirtyDaysAgo)
+        .reduce((sum, expense) => sum + expense.amount, 0);
       
       const sevenDaysAgo = new Date();
       sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-      const weeklyExpenses = expenses.filter(expense => new Date(expense.date) >= sevenDaysAgo);
-      const weeklyTotal = weeklyExpenses.reduce((sum, expense) => sum + expense.amount, 0);
+      const weeklyTotal = allExpenses
+        .filter(expense => new Date(expense.date) >= sevenDaysAgo)
+        .reduce((sum, expense) => sum + expense.amount, 0);
       
       const avgPerDay = monthlyTotal > 0 ? monthlyTotal / 30 : 0;
       
       const categoryTotals: Record<string, number> = {};
-      expenses.forEach((expense) => {
-        // Use the category name directly as the key
+      allExpenses.forEach((expense) => {
         categoryTotals[expense.category] = (categoryTotals[expense.category] || 0) + expense.amount;
       });
       
+      // Now, set the state with the calculated values
       setStats({
         totalExpenses,
         monthlyExpenses: monthlyTotal,
@@ -60,8 +75,8 @@ export default function Dashboard() {
       });
       
       setExpensesByCategory(categoryTotals);
-      // The API already sorts by date, so we can just take the first 5 for "Recent"
-      setRecentExpenses(expenses.slice(0, 5));
+      // Set the recent expenses from the dedicated small fetch
+      setRecentExpenses(recent);
       
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
@@ -69,6 +84,9 @@ export default function Dashboard() {
       setLoading(false);
     }
   };
+
+  // --- The rest of your component's JSX remains exactly the same. ---
+  // It will now be populated with the correct data fetched and calculated above.
 
   if (loading) {
     return (
