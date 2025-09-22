@@ -4,21 +4,19 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 import Expense from '@/models/Expense';
 
-type RouteContext = {
-  params: {
-    id: string;
-  };
-};
-
 // HANDLER FOR UPDATING AN EXPENSE (PUT)
-export async function PUT(request: NextRequest, context: RouteContext) {
+export async function PUT(
+  request: NextRequest,
+  // This is the canonical and correct signature that Next.js expects.
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = context.params;
+    // 'id' is now directly available from the destructured 'params'.
+    const { id } = params;
     const body = await request.json();
     
     await connectDB();
     
-    // Find the expense by ID and update it. { new: true } returns the updated document.
     const updatedExpense = await Expense.findByIdAndUpdate(id, body, { new: true, runValidators: true });
 
     if (!updatedExpense) {
@@ -39,9 +37,13 @@ export async function PUT(request: NextRequest, context: RouteContext) {
 }
 
 // HANDLER FOR DELETING AN EXPENSE (DELETE)
-export async function DELETE(request: NextRequest, context: RouteContext) {
+export async function DELETE(
+  request: NextRequest,
+  // Use the same correct signature here.
+  { params }: { params: { id: string } }
+) {
   try {
-    const { id } = context.params;
+    const { id } = params;
 
     await connectDB();
 
