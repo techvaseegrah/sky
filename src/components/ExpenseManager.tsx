@@ -137,16 +137,28 @@ export default function ExpenseManager() {
     }
   };
 
-  const handleEditClick = (expense: Expense) => {
-    setEditingExpenseId(expense._id);
-    setFormData({
-      ...expense,
-      amount: expense.amount.toString(),
-      date: new Date(expense.date).toISOString().split('T')[0],
-    });
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+  
+const handleEditClick = (expense: Expense) => {
+  // Add this check
+  if (!expense._id) {
+    console.error("Cannot edit an expense without an ID.");
+    return; // Exit the function if there's no ID
+  }
+
+  setEditingExpenseId(expense._id); // Now TypeScript knows _id is a string here
+  setFormData({
+    ...expense,
+    subcategory: expense.subcategory ?? '', 
+    // Do the same for any other optional fields in your form.
+    supplier: expense.supplier ?? '',     
+
+    // And don't forget the fields that need type conversion
+    amount: expense.amount.toString(),
+    date: new Date(expense.date).toISOString().split('T')[0],
+  });
+  setShowForm(true);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
   
   const handleDelete = async () => {
     if (!deleteConfirmId) return;
