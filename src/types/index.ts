@@ -1,41 +1,41 @@
-// Navigation Types
-export type TabType = 'dashboard' | 'expenses';
+// Add these new types to your existing types file
 
-// Database Entity Types
+export type TabType = 'dashboard' | 'expenses' | 'liquor-purchase' | 'sales';
+
 export interface Expense {
   _id?: string;
   category: string;
   subcategory?: string;
   description: string;
   amount: number;
-  date: Date;
+  date: string | Date;
   supplier?: string;
-  receipt?: string;
-  tags?: string[]; 
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
-export interface ExpenseCategory {
-  id: string;
+// --- NEW TYPES FOR TRANSACTIONS ---
+
+export interface TransactionItem {
   name: string;
-  icon: string;
-  subcategories: ExpenseSubcategory[];
+  quantity: number;
+  price: number;
 }
 
-export interface ExpenseSubcategory {
-  id: string;
-  name: string;
-  description?: string;
-}
-
-export interface Transaction {
-  _id?: string;
-  type: 'sale' | 'purchase' | 'expense';
+export interface Purchase {
+  _id: string;
+  invoiceNumber: string;
+  date: string | Date;
+  supplier: string;
+  items: TransactionItem[];
   totalAmount: number;
-  date: Date;
-  customer?: string;
-  notes?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
+  status: 'Paid' | 'Pending' | 'Cancelled';
+}
+
+export interface Sale {
+  _id: string;
+  orderNumber: string;
+  date: string | Date;
+  customerName: string;
+  items: TransactionItem[];
+  totalAmount: number;
+  paymentMethod: 'Cash' | 'Card' | 'Online';
 }

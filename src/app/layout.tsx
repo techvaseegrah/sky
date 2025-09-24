@@ -1,34 +1,26 @@
-// src/app/layout.tsx
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from "next";
+import { Inter } from "next/font/google";
+import "./globals.css";
+import { Toaster } from 'react-hot-toast'; // <-- 1. Import the Toaster
+
+const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Business Expense Manager',
-  description: 'A comprehensive business expense management system with advanced categorization and analytics',
-}
-
-// Initialize cron jobs on server startup
-if (typeof window === 'undefined') {
-  // Dynamic import to avoid issues with client-side rendering
-  import('@/lib/cronScheduler').then(({ initializeCronJobs }) => {
-    initializeCronJobs();
-  }).catch(error => {
-    console.error('Failed to initialize cron jobs:', error);
-  });
-}
+  title: "Sky Bar",
+  description: "Management Application",
+};
 
 export default function RootLayout({
   children,
-}: {
-  children: React.ReactNode
-}) {
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
     <html lang="en">
-      <body className="bg-gray-50 min-h-screen">
-          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </main>
+      <body className={inter.className}>
+        {children}
+        <Toaster position="top-right" /> {/* <-- 2. Add the component here */}
       </body>
     </html>
-  )
+  );
 }
