@@ -1,4 +1,27 @@
-import { ExpenseCategory } from '@/types';
+// 1. DEFINE THE NECESSARY TYPES
+// This replaces the "import ExpenseCategory from '@/types';"
+// which was causing the error because the type was not defined.
+
+export interface Subcategory {
+  id: string;
+  name: string;
+  description: string;
+}
+
+export interface ExpenseCategory {
+  id: string;
+  name: string;
+  icon: string;
+  subcategories: Subcategory[];
+}
+
+// Optional: A type for the enriched subcategory object returned by getAllSubcategories
+export interface EnrichedSubcategory extends Subcategory {
+  categoryId: string;
+  categoryName: string;
+}
+
+// The rest of your code is largely correct, with added explicit return types for functions.
 
 export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
   {
@@ -98,12 +121,14 @@ export const getCategoryById = (id: string): ExpenseCategory | undefined => {
   return EXPENSE_CATEGORIES.find(category => category.id === id);
 };
 
-export const getSubcategoryById = (categoryId: string, subcategoryId: string) => {
+// 2. ADDED EXPLICIT RETURN TYPE
+export const getSubcategoryById = (categoryId: string, subcategoryId: string): Subcategory | undefined => {
   const category = getCategoryById(categoryId);
   return category?.subcategories.find(sub => sub.id === subcategoryId);
 };
 
-export const getAllSubcategories = () => {
+// 3. ADDED EXPLICIT RETURN TYPE
+export const getAllSubcategories = (): EnrichedSubcategory[] => {
   return EXPENSE_CATEGORIES.flatMap(category => 
     category.subcategories.map(sub => ({
       ...sub,
@@ -113,7 +138,10 @@ export const getAllSubcategories = () => {
   );
 };
 
-export const getSubcategoriesByCategory = (categoryId: string) => {
+// 4. ADDED EXPLICIT RETURN TYPE
+export const getSubcategoriesByCategory = (categoryId: string): Subcategory[] => {
   const category = getCategoryById(categoryId);
-  return category?.subcategories || [];
+  // Using the nullish coalescing operator ?? is slightly more modern than ||
+  // but both work fine here. It ensures a non-null/undefined value is returned.
+  return category?.subcategories ?? [];
 };
